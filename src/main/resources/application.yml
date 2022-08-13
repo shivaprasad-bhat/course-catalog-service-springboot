@@ -1,0 +1,5 @@
+# Default application properties file
+spring:
+  application:
+    name: course-catalog-service
+message: Hello from default profile

@@ -1,0 +1,3 @@
+# Non Prod application properties file
+
+message: Hello From debug
