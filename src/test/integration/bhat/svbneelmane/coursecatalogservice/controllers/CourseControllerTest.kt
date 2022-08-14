@@ -5,7 +5,11 @@ package bhat.svbneelmane.coursecatalogservice.controllers
  * @author shivaprasad-bhat
  */
 import bhat.svbneelmane.coursecatalogservice.dto.CourseDTO
+import bhat.svbneelmane.coursecatalogservice.repository.CourseRepository
+import bhat.svbneelmane.coursecatalogservice.utils.getCourseEntityList
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -19,6 +23,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 class CourseControllerTest {
     @Autowired
     lateinit var webTestClient: WebTestClient
+
+    @Autowired
+    lateinit var courseRepository: CourseRepository
+
+    @BeforeEach
+    fun setUp() {
+        courseRepository.deleteAll()
+        val courses = getCourseEntityList()
+        courseRepository.saveAll(courses)
+    }
 
     /**
      * Function to test the add course POST endpoint
@@ -36,5 +50,18 @@ class CourseControllerTest {
             .responseBody
 
         assertTrue(savedCourse?.id != null)
+    }
+
+    @Test
+    fun getAllCoursesTest() {
+        val allCourses = webTestClient.get()
+            .uri("/v1/courses")
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList(CourseDTO::class.java)
+            .returnResult()
+            .responseBody
+
+        assertEquals(4, allCourses?.size)
     }
 }
