@@ -26,4 +26,11 @@ class CourseService(val courseRepository: CourseRepository) {
         logger.info("Saved course: $entity")
         return entity.toCourseData()
     }
+
+    fun getAllCourses(): List<CourseDTO> {
+        return courseRepository.findAll()
+            .map {
+                it.toCourseData()
+            }
+    }
 }
